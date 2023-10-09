@@ -1,10 +1,14 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.XR;
+using UnityEngine.InputSystem;
+using static UnityEditor.Timeline.TimelinePlaybackControls;
+
 
 //This script is a clean powerful solution to a top-down movement player
 public class Movement : MonoBehaviour
 {
+    PlayerInput input;
     //Public variables that wer can edit in the editor
     public float maxSpeed = 5; //Our max speed
     public float acceleration = 20; //How fast we accelerate
@@ -16,6 +20,8 @@ public class Movement : MonoBehaviour
 
     public float dashStrength;
     float dashTimer;
+    float attackTimer;
+    public float attackCooldown;
     public float dashCooldown;
 
     float x; // Input
@@ -25,9 +31,14 @@ public class Movement : MonoBehaviour
 
     bool onGround = true;
     Rigidbody2D rb2D; //Ref to our rigidbody
+    bool isDashing;
+    public GameObject playerSprite;
+    public Animator SwordAnimator;
 
     private void Start()
     {
+        dashTimer += Time.deltaTime;
+        input = GetComponent<PlayerInput>();
         Physics2D.queriesStartInColliders = false;
         //assign our ref.
         rb2D = GetComponent<Rigidbody2D>();
@@ -37,18 +48,52 @@ public class Movement : MonoBehaviour
 
     void Update()
     {
-        MovementX();
-        Jump();
-        GravityCheck();
-
+        attackTimer += Time.deltaTime;
         dashTimer += Time.deltaTime;
-        
-        if(Input.GetKey(KeyCode.LeftShift) && dashTimer > dashCooldown)
+        if (!isDashing)
         {
-            rb2D.velocity = new Vector2(x * dashStrength, rb2D.velocity.y);
-            dashTimer = 0;
+
+            MovementHorizontal();
+            GravityCheck();
+            GroundCheck();
+            Flip();
         }
-      
+
+
+    }
+    public void Flip()
+    {
+        if (x < 0)
+        {
+            playerSprite.transform.rotation = new(0, 180, 0, 0);
+        }
+        else
+        {
+            playerSprite.transform.rotation = new(0, 0, 0, 0);
+        }
+    }
+    public void Dash(InputAction.CallbackContext context)
+    {
+        if (context.action.IsPressed() && dashTimer > dashCooldown)
+        {
+            isDashing = true;
+            rb2D.velocity += new Vector2(x * dashStrength, 0);
+            dashTimer = 0;
+            Invoke("DashDone", 0.1f);
+        }
+    }
+    public void Attack(InputAction.CallbackContext context)
+    {
+        if (context.action.IsPressed() && attackTimer > attackCooldown)
+        {
+            SwordAnimator.SetTrigger("Attack");
+
+        }
+
+    }
+    public void DashDone()
+    {
+        isDashing = false;
     }
 
     private void GravityCheck()
@@ -63,19 +108,19 @@ public class Movement : MonoBehaviour
         }
     }
 
-    private void Jump()
+    public void Jump(InputAction.CallbackContext context)
     {
-        if (Input.GetButtonDown("Jump") && amountOfJumps > 1)
+        if (context.action.IsPressed() && amountOfJumps > 1)
         {
             amountOfJumps--;
             rb2D.velocity = new Vector2(rb2D.velocity.x, jumpPower);
         }
-        // HOLD TO JUMP
-        //if (Input.GetButtonDown("Jump") && rb2D.velocity.y > 0)
-        //{
-        //    
-        //    rb2D.velocity = new Vector2(rb2D.velocity.x, rb2D.velocity.y * 0.25f);
-        //}
+
+
+    }
+
+    private void GroundCheck()
+    {
         if (onGround)
         {
             amountOfJumps = 2;
@@ -83,24 +128,29 @@ public class Movement : MonoBehaviour
         onGround = Physics2D.Raycast(transform.position, Vector2.down, groundCheckLength);
     }
 
-    private void MovementX()
+    public void MovementInput(InputAction.CallbackContext context)
     {
 
-        x = Input.GetAxisRaw("Horizontal");
+        x = context.ReadValue<float>();
 
+    }
+
+    private void MovementHorizontal()
+    {
         velocityX += x * acceleration * Time.deltaTime;
 
 
         velocityX = Mathf.Clamp(velocityX, -maxSpeed, maxSpeed);
 
 
+
         if (x == 0 || (x < 0 == velocityX > 0))
         {
-           
+
             velocityX *= 1 - deacceleration * Time.deltaTime;
         }
 
-
         rb2D.velocity = new Vector2(velocityX, rb2D.velocity.y);
+        Debug.Log(x);
     }
 }
