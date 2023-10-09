@@ -100,7 +100,7 @@ public class Movement : MonoBehaviour
     {
         if (rb2D.velocity.y < 0)
         {
-            rb2D.gravityScale = 4;
+            rb2D.gravityScale = 5;
         }
         else
         {
@@ -118,7 +118,24 @@ public class Movement : MonoBehaviour
 
 
     }
-
+    public void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Water"))
+        {
+            maxSpeed = 5;
+        }
+    }
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        OnTriggerEnter2D(collision);
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Water"))
+        {
+            maxSpeed = 15;
+        }
+    }
     private void GroundCheck()
     {
         if (onGround)
