@@ -1,8 +1,6 @@
-using Unity.VisualScripting;
+
 using UnityEngine;
-using UnityEngine.XR;
 using UnityEngine.InputSystem;
-using static UnityEditor.Timeline.TimelinePlaybackControls;
 
 
 //This script is a clean powerful solution to a top-down movement player
@@ -37,6 +35,7 @@ public class Movement : MonoBehaviour
 
     private void Start()
     {
+
         dashTimer += Time.deltaTime;
         input = GetComponent<PlayerInput>();
         Physics2D.queriesStartInColliders = false;
@@ -168,6 +167,6 @@ public class Movement : MonoBehaviour
         }
 
         rb2D.velocity = new Vector2(velocityX, rb2D.velocity.y);
-        Debug.Log(x);
+
     }
 }
