@@ -294,6 +294,17 @@
                 },
                 {
                     "name": "",
+                    "id": "025fab15-8b44-448c-b6d5-46c1800255fb",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "04af48d1-5793-4e0f-b33a-5c2cae26d40f",
                     "path": "<Gamepad>/buttonSouth",
                     "interactions": "Press",
