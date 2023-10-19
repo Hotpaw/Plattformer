@@ -6,9 +6,9 @@ using UnityEngine.InputSystem;
 //This script is a clean powerful solution to a top-down movement player
 public class Movement : MonoBehaviour
 {
-    PlayerInput input;
+    
     //Public variables that wer can edit in the editor
-    public float maxSpeed = 5; //Our max speed
+    public float maxSpeed; //Our max speed
     public float acceleration = 20; //How fast we accelerate
     public float deacceleration = 4; //brake power
     public float jumpPower;
@@ -22,27 +22,30 @@ public class Movement : MonoBehaviour
     public float attackCooldown;
     public float dashCooldown;
 
+
     float x; // Input
     //Private variables for internal logic
-
+    public Vector2 rayDir;
     float velocityX; //Our current velocity
 
-    bool onGround = true;
-    Rigidbody2D rb2D; //Ref to our rigidbody
+
+    public bool onGround = true;
+    Rigidbody2D rb; //Ref to our rigidbody
     bool isDashing;
     public GameObject playerSprite;
     public Animator SwordAnimator;
 
+    Collider2D col;
     private void Start()
     {
-
+        col = GetComponent<Collider2D>();
         dashTimer += Time.deltaTime;
-        input = GetComponent<PlayerInput>();
+      
         Physics2D.queriesStartInColliders = false;
         //assign our ref.
-        rb2D = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
         var collider = GetComponent<Collider2D>();
-        groundCheckLength = collider.bounds.size.y + groundCheckDistance;
+       
     }
 
     void Update()
@@ -56,9 +59,10 @@ public class Movement : MonoBehaviour
             GravityCheck();
             GroundCheck();
             Flip();
+            //CornerCorrecting();
         }
 
-
+        Debug.Log(rb.velocity);
     }
     public void Flip()
     {
@@ -76,7 +80,7 @@ public class Movement : MonoBehaviour
         if (context.action.IsPressed() && dashTimer > dashCooldown)
         {
             isDashing = true;
-            rb2D.velocity += new Vector2(x * dashStrength, 0);
+            rb.velocity += new Vector2(x * dashStrength, 0);
             dashTimer = 0;
             Invoke("DashDone", 0.1f);
         }
@@ -97,13 +101,20 @@ public class Movement : MonoBehaviour
 
     private void GravityCheck()
     {
-        if (rb2D.velocity.y < 0)
+        if (rb.velocity.y < 3 && !onGround)
         {
-            rb2D.gravityScale = 5;
+            rb.gravityScale = 5;
+            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y - 0.2f);
+
         }
         else
         {
-            rb2D.gravityScale = 1;
+            rb.gravityScale = 1;
+            if (rb.velocity.y < 0)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, 0);
+            }
+
         }
     }
 
@@ -112,17 +123,20 @@ public class Movement : MonoBehaviour
         if (context.action.IsPressed() && amountOfJumps > 1)
         {
             amountOfJumps--;
-            rb2D.velocity = new Vector2(rb2D.velocity.x, jumpPower);
+
+
+            rb.velocity = new Vector2(rb.velocity.x, jumpPower);
+
+
         }
+
 
 
     }
     public void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Water"))
-        {
-            maxSpeed = 5;
-        }
+
+      
     }
     private void OnTriggerStay2D(Collider2D collision)
     {
@@ -130,10 +144,7 @@ public class Movement : MonoBehaviour
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.CompareTag("Water"))
-        {
-            maxSpeed = 15;
-        }
+        
     }
     private void GroundCheck()
     {
@@ -142,7 +153,9 @@ public class Movement : MonoBehaviour
             amountOfJumps = 2;
         }
         onGround = Physics2D.Raycast(transform.position, Vector2.down, groundCheckLength);
+        Debug.DrawRay(transform.position, Vector2.down, Color.green, groundCheckLength);
     }
+
 
     public void MovementInput(InputAction.CallbackContext context)
     {
@@ -159,6 +172,7 @@ public class Movement : MonoBehaviour
         velocityX = Mathf.Clamp(velocityX, -maxSpeed, maxSpeed);
 
 
+       
 
         if (x == 0 || (x < 0 == velocityX > 0))
         {
@@ -166,7 +180,57 @@ public class Movement : MonoBehaviour
             velocityX *= 1 - deacceleration * Time.deltaTime;
         }
 
-        rb2D.velocity = new Vector2(velocityX, rb2D.velocity.y);
+        rb.velocity = new Vector2(velocityX, rb.velocity.y);
 
+    }
+    private void CornerCorrecting()
+    {
+
+
+        if (onGround)
+            return;
+
+        RaycastHit2D airCollisionLower;
+        RaycastHit2D airCollisionUpper;
+
+        Vector3 startPointLower = transform.position;
+        Vector3 startPointUpper = transform.position;
+
+        startPointLower.y -= col.bounds.size.y / 2;
+        startPointUpper.y -= (col.bounds.size.y / 2) - 0.05f;
+
+        Vector2 directionToCheck = Vector2.zero;
+
+        if (x < 0)
+            directionToCheck = Vector2.left;
+        else if (x > 0)
+            directionToCheck = Vector2.right;
+        else if (rb.velocity.x < 0)
+            directionToCheck = Vector2.left;
+        else if (rb.velocity.x > 0)
+            directionToCheck = Vector2.right;
+        else
+            return;
+
+        airCollisionLower = Physics2D.Raycast(startPointLower, directionToCheck, col.bounds.size.x);
+        airCollisionUpper = Physics2D.Raycast(startPointUpper, directionToCheck, col.bounds.size.x);
+
+
+        Debug.DrawRay(startPointLower, directionToCheck, Color.red);
+        Debug.DrawRay(startPointUpper, directionToCheck, Color.yellow);
+        if (airCollisionLower && !airCollisionUpper)
+        {
+            rb.velocity = Vector2.zero;
+            Vector3 targetPosition = rb.transform.position;
+            targetPosition.x += /*col.bounds.size.x */ directionToCheck.x * airCollisionLower.distance;
+            targetPosition.y += startPointUpper.y - startPointLower.y;
+            rb.transform.position = targetPosition;
+
+        }
+        else if (airCollisionLower)
+        {
+            rb.velocity = new Vector2(0, rb.velocity.y);
+
+        }
     }
 }
