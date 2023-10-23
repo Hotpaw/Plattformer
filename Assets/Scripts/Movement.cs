@@ -137,8 +137,8 @@ public class Movement : MonoBehaviour
         else if (wallhitLeft || wallhitRight && context.action.WasPressedThisFrame())
         {
             amountOfJumps++;
-            WallJump();
-
+            // WallJump();
+            rb.velocity = new Vector2(rb.velocity.x, jumpPower);
 
         }
 
