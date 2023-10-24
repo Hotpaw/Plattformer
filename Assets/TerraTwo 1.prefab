@@ -827,10 +827,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6026beaceb303e46825dd7f72e90bce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ease: 8
   groundLayer: {fileID: 1773644958418130132}
   wallLayer: {fileID: 2135800952965678706}
   animatedTile: {fileID: 0}
   baseTile: {fileID: 0}
+  multiplier: 0
 --- !u!1 &6831630959395563152
 GameObject:
   m_ObjectHideFlags: 0

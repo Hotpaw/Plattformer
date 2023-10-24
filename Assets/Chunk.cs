@@ -3,13 +3,13 @@ using System.Collections;
 using Unity.VisualScripting;
 using UnityEditor.Tilemaps;
 using UnityEngine;
-
+using DG.Tweening;
 using UnityEngine.Tilemaps;
 
 
 public class Chunk : MonoBehaviour
 {
-
+    public Ease ease;
     public Tilemap groundLayer;
     public Tilemap wallLayer;
     public AnimatedTile animatedTile;
@@ -78,10 +78,15 @@ public class Chunk : MonoBehaviour
         Vector3 offset = new Vector3((18 * multiplier) + 0.5f, 2, 0);
         var gameObject = new GameObject();
         var spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-        var rigidbody = gameObject.AddComponent<Rigidbody2D>();
-        rigidbody.gravityScale = 1f;
-        spriteRenderer.sprite = sprite;
+        //var rigidbody = gameObject.AddComponent<Rigidbody2D>();
+        //rigidbody.gravityScale = 1f;
         gameObject.transform.position = localPosition + offset;
+        gameObject.transform.DOMoveY(localPosition.y +0.5f, 0.56f).SetEase(ease);
+        //gameObject.transform.DOPunchScale(Vector3.one, 0.5f);
+        spriteRenderer.DOFade(0, 0f);
+        spriteRenderer.DOFade(1, 0.3f);
+
+        spriteRenderer.sprite = sprite;
         Destroy(gameObject, 0.56f);
     }
     
