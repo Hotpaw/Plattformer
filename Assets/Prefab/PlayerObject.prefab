@@ -136,7 +136,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0
-  m_GravityScale: 1
+  m_GravityScale: 2
   m_Material: {fileID: 6200000, guid: 9ab28080bb59e6d46883f1163b21d66b, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
@@ -276,11 +276,13 @@ MonoBehaviour:
   maxSpeed: 8
   acceleration: 30
   deacceleration: 15
-  jumpPower: 20
+  jumpPower: 15
   fallMultiplier: 2
   groundCheckLength: 0.83
   coyoteTime: 0.1
   jumpPressLeniancy: 0.1
+  upperVerticalVelocityClamp: 13
+  lowerVerticalVelocityClamp: 15
   groundCheckBoxSize: {x: 0.5, y: 0.1}
   groundLayer:
     serializedVersion: 2
