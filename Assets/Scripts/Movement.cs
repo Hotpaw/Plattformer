@@ -30,9 +30,9 @@ public class Movement : MonoBehaviour
 
     private float xInput;
     private float velocityX;
-
     private float timeSinceGrounded = 1;
     private float timeSinceJumpPressed = 1;
+    private float gravityscale;
     private bool doubleJump;
     private bool isDashing;
     private Rigidbody2D rb;
@@ -49,6 +49,7 @@ public class Movement : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         playerSprite = GetComponent<SpriteRenderer>();
         vecGravity = new Vector2(0, -Physics2D.gravity.y);
+        gravityscale = rb.gravityScale;
     }
 
     void Update()
@@ -66,10 +67,10 @@ public class Movement : MonoBehaviour
             if (rb.velocity.y < 0 || !Gamepad.current.bButton.isPressed)
                 rb.velocity -= vecGravity * fallMultiplier * Time.deltaTime;
 
-            if (Mathf.Abs(rb.velocity.y) < 0.1f)
-                rb.gravityScale = 0.5f;
+            if (Mathf.Abs(rb.velocity.y) < 0.5f)
+                rb.gravityScale = gravityscale / 4;
             else
-                rb.gravityScale = 1f;
+                rb.gravityScale = gravityscale;
 
             if (timeSinceJumpPressed < jumpPressLeniancy && (timeSinceGrounded < coyoteTime || doubleJump))
             {
@@ -104,6 +105,7 @@ public class Movement : MonoBehaviour
 
             isDashing = true;
             rb.velocity = new Vector2(i * dashStrength, 0);
+            rb.constraints = RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
             dashTimer = 0;
             Invoke("DashDone", 0.2f);
         }
@@ -112,6 +114,7 @@ public class Movement : MonoBehaviour
     public void DashDone()
     {
         isDashing = false;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
     }
 
     public void Jump(InputAction.CallbackContext context)

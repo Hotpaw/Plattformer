@@ -3041,7 +3041,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 546327891}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 235c3df012f72974fb902663ebb51d9b, type: 3}
   m_Name: 
@@ -4721,7 +4721,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 295475505083901567, guid: 0d34ad8b81972e642becd51919a93675, type: 3}
       propertyPath: jumpPower
-      value: 20
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 295475505083901567, guid: 0d34ad8b81972e642becd51919a93675, type: 3}
       propertyPath: lowerVerticalVelocityClamp
@@ -4729,7 +4729,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 295475505083901567, guid: 0d34ad8b81972e642becd51919a93675, type: 3}
       propertyPath: upperVerticalVelocityClamp
-      value: 15
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 1702481453612768351, guid: 0d34ad8b81972e642becd51919a93675, type: 3}
       propertyPath: m_Name
@@ -4774,6 +4774,14 @@ PrefabInstance:
     - target: {fileID: 5870169341587961433, guid: 0d34ad8b81972e642becd51919a93675, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7623598330855756928, guid: 0d34ad8b81972e642becd51919a93675, type: 3}
+      propertyPath: m_GravityScale
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7916083948968338633, guid: 0d34ad8b81972e642becd51919a93675, type: 3}
+      propertyPath: m_Time
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
