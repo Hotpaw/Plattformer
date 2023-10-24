@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 9045654204436746938}
   - component: {fileID: 6048051146222670029}
   - component: {fileID: 16437075874405009}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Plattform Effector
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 14.28, y: 0.46, z: 0}
-  m_LocalScale: {x: 6.72353, y: 1, z: 1}
+  m_LocalScale: {x: 6.72353, y: 0.1925, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}

@@ -1,237 +1,152 @@
 
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEditor.Timeline.TimelinePlaybackControls;
 
 
 //This script is a clean powerful solution to a top-down movement player
 public class Movement : MonoBehaviour
 {
+    [Header("Move Variables")]
+    public float maxSpeed; 
+    public float acceleration = 20;
+    public float deacceleration = 4;
 
-    //Public variables that wer can edit in the editor
-    public float maxSpeed; //Our max speed
-    public float acceleration = 20; //How fast we accelerate
-    public float deacceleration = 4; //brake power
+    [Header("Jump Variables")]
     public float jumpPower;
+    public float fallMultiplier;
     public float groundCheckLength;
-    public float groundCheckDistance = 0.1f;
-    public int amountOfJumps;
+    public float coyoteTime;
+    public float jumpPressLeniancy;
+    public float upperVerticalVelocityClamp;
+    public float lowerVerticalVelocityClamp;
+    public Vector2 groundCheckBoxSize;
+    public LayerMask groundLayer;
 
+    [Header("Dash Variables")]
     public float dashStrength;
-    float dashTimer;
-    float attackTimer;
-    public float attackCooldown;
     public float dashCooldown;
+    private float dashTimer;
 
-    public float leftRayCheck;
-    public float rightRayCheck;
-    float x; // Input
-    //Private variables for internal logic
-    public Vector2 rayDir;
-    float velocityX; //Our current velocity
+    private float xInput;
+    private float velocityX;
 
+    private float timeSinceGrounded = 1;
+    private float timeSinceJumpPressed = 1;
+    private bool doubleJump;
+    private bool isDashing;
+    private Rigidbody2D rb;
+    private SpriteRenderer playerSprite;
 
-    public bool onGround = true;
-    Rigidbody2D rb; //Ref to our rigidbody
-    bool isDashing;
-    public GameObject playerSprite;
-    public Animator SwordAnimator;
-
-    Collider2D col;
     public bool wallhitLeft;
     public bool wallhitRight;
+
+    private Vector2 vecGravity;
+
     private void Start()
     {
-        col = GetComponent<Collider2D>();
-        dashTimer += Time.deltaTime;
-
         Physics2D.queriesStartInColliders = false;
-        //assign our ref.
         rb = GetComponent<Rigidbody2D>();
-        var collider = GetComponent<Collider2D>();
-
+        playerSprite = GetComponent<SpriteRenderer>();
+        vecGravity = new Vector2(0, -Physics2D.gravity.y);
     }
 
     void Update()
     {
-        attackTimer += Time.deltaTime;
         dashTimer += Time.deltaTime;
+        timeSinceGrounded += Time.deltaTime;
+        timeSinceJumpPressed += Time.deltaTime;
+
         if (!isDashing)
         {
-
             MovementHorizontal();
-            GravityCheck();
             GroundCheck();
             Flip();
-            //CornerCorrecting();
+
+            if (rb.velocity.y < 0 || !Gamepad.current.bButton.isPressed)
+                rb.velocity -= vecGravity * fallMultiplier * Time.deltaTime;
+
+            if (Mathf.Abs(rb.velocity.y) < 0.1f)
+                rb.gravityScale = 0.5f;
+            else
+                rb.gravityScale = 1f;
+
+            if (timeSinceJumpPressed < jumpPressLeniancy && (timeSinceGrounded < coyoteTime || doubleJump))
+            {
+                rb.velocity = new Vector2(rb.velocity.x, jumpPower);
+
+                if (timeSinceGrounded > coyoteTime)
+                    doubleJump = false;
+            }
         }
-        WallStuck();
-        wallhitLeft = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y + 1f), -Vector2.right,leftRayCheck);
-        wallhitRight = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y + 1f), Vector2.right, rightRayCheck);
 
-
+        rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -lowerVerticalVelocityClamp, upperVerticalVelocityClamp));
     }
+
     public void Flip()
     {
-        if (x < 0)
-        {
-            playerSprite.transform.rotation = new(0, 180, 0, 0);
-        }
-        else
-        {
-            playerSprite.transform.rotation = new(0, 0, 0, 0);
-        }
+        if (xInput < -0.1f)
+            playerSprite.flipX = true;
+        else if (xInput > 0.1f)
+            playerSprite.flipX = false;
     }
+
     public void Dash(InputAction.CallbackContext context)
     {
         if (context.action.IsPressed() && dashTimer > dashCooldown)
         {
+            int i;
+
+            if (playerSprite.flipX)
+                i = -1;
+            else
+                i = 1;
+
             isDashing = true;
-            rb.velocity += new Vector2(x * dashStrength, 0);
+            rb.velocity = new Vector2(i * dashStrength, 0);
             dashTimer = 0;
-            Invoke("DashDone", 0.1f);
+            Invoke("DashDone", 0.2f);
         }
     }
-    public void Attack(InputAction.CallbackContext context)
-    {
-        if (context.action.IsPressed() && attackTimer > attackCooldown)
-        {
-            SwordAnimator.SetTrigger("Attack");
 
-        }
-
-    }
     public void DashDone()
     {
         isDashing = false;
     }
 
-    private void GravityCheck()
-    {
-        if (rb.velocity.y < 3 && !onGround)
-        {
-            rb.gravityScale = 5;
-            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y - 0.2f * Time.deltaTime);
-
-        }
-        else
-        {
-            rb.gravityScale = 1;
-
-
-        }
-    }
-
     public void Jump(InputAction.CallbackContext context)
     {
-
-
-        if (!wallhitLeft && context.action.WasPressedThisFrame() && amountOfJumps > 1)
+        if (!wallhitLeft && context.action.WasPressedThisFrame())
         {
-            amountOfJumps--;
-
-           
-            rb.velocity = new Vector2(rb.velocity.x, jumpPower);
-
-
+            timeSinceJumpPressed = 0;
         }
-        else if (wallhitLeft || wallhitRight && context.action.WasPressedThisFrame())
-        {
-            amountOfJumps++;
-            // WallJump();
-            rb.velocity = new Vector2(rb.velocity.x, jumpPower);
-
-        }
-
     }
-    public void WallStuck()
-    {
-        if (wallhitLeft)
-        {
 
-            rb.sharedMaterial.friction = 0.8f;
-
-        }
-        if (wallhitRight)
-        {
-
-            rb.sharedMaterial.friction = 0.8f;
-
-        }
-
-    }
-    public void WallJump()
-    {
-        isDashing = true;
-        amountOfJumps = 0;
-        if (wallhitLeft)
-        {
-          
-            rb.velocity += new Vector2(20, 10);
-        }
-        if(wallhitRight)
-        {
-            Debug.Log("RIGHT");
-            rb.velocity += new Vector2(-20, 10);
-        }
-     
-      
-        dashTimer = 0;
-        Invoke("DashDone", 0.1f);
-    }
-    public void OnTriggerEnter2D(Collider2D collision)
-    {
-
-
-    }
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        OnTriggerEnter2D(collision);
-    }
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-
-    }
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-
-    }
     private void GroundCheck()
     {
-        if (onGround)
+        if (Physics2D.BoxCast(transform.position, groundCheckBoxSize, 0, -transform.up, groundCheckLength, groundLayer))
         {
-            amountOfJumps = 2;
+            doubleJump = true;
+            timeSinceGrounded = 0;
         }
-        onGround = Physics2D.Raycast(transform.position, Vector2.down, groundCheckLength);
-        Debug.DrawRay(transform.position, Vector2.down, Color.green, groundCheckLength);
     }
-
 
     public void MovementInput(InputAction.CallbackContext context)
     {
-
-        x = context.ReadValue<float>();
-
+        xInput = context.ReadValue<float>();
     }
 
     private void MovementHorizontal()
     {
-        velocityX += x * acceleration * Time.deltaTime;
-
+        velocityX += xInput * acceleration * Time.deltaTime;
 
         velocityX = Mathf.Clamp(velocityX, -maxSpeed, maxSpeed);
 
-
-
-
-        if (x == 0 || (x < 0 == velocityX > 0))
+        if (xInput == 0 || (xInput < 0 == velocityX > 0))
         {
-
             velocityX *= 1 - deacceleration * Time.deltaTime;
         }
 
         rb.velocity = new Vector2(velocityX, rb.velocity.y);
-
     }
-   
-   
 }
