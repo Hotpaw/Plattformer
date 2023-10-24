@@ -37,9 +37,7 @@ public class Movement : MonoBehaviour
     private bool isDashing;
     private Rigidbody2D rb;
     private SpriteRenderer playerSprite;
-
-    public bool wallhitLeft;
-    public bool wallhitRight;
+    private Animator animator;
 
     private Vector2 vecGravity;
 
@@ -48,6 +46,7 @@ public class Movement : MonoBehaviour
         Physics2D.queriesStartInColliders = false;
         rb = GetComponent<Rigidbody2D>();
         playerSprite = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
         vecGravity = new Vector2(0, -Physics2D.gravity.y);
         gravityscale = rb.gravityScale;
     }
@@ -78,10 +77,14 @@ public class Movement : MonoBehaviour
 
                 if (timeSinceGrounded > coyoteTime)
                     doubleJump = false;
+
+                animator.SetTrigger("Jump");
             }
         }
 
         rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -lowerVerticalVelocityClamp, upperVerticalVelocityClamp));
+        animator.SetFloat("Speed", Mathf.Abs(rb.velocity.x));
+        animator.SetFloat("VerticalSpeed", rb.velocity.y);
     }
 
     public void Flip()
@@ -119,7 +122,7 @@ public class Movement : MonoBehaviour
 
     public void Jump(InputAction.CallbackContext context)
     {
-        if (!wallhitLeft && context.action.WasPressedThisFrame())
+        if (context.action.WasPressedThisFrame())
         {
             timeSinceJumpPressed = 0;
         }
@@ -127,11 +130,14 @@ public class Movement : MonoBehaviour
 
     private void GroundCheck()
     {
-        if (Physics2D.BoxCast(transform.position, groundCheckBoxSize, 0, -transform.up, groundCheckLength, groundLayer))
+        bool isGrounded = Physics2D.BoxCast(transform.position, groundCheckBoxSize, 0, -transform.up, groundCheckLength, groundLayer);
+        if (isGrounded)
         {
             doubleJump = true;
             timeSinceGrounded = 0;
         }
+
+        animator.SetBool("Grounded", isGrounded);
     }
 
     public void MovementInput(InputAction.CallbackContext context)
