@@ -13,6 +13,7 @@ public class Chunk : MonoBehaviour
     public Tilemap layer1;
     public Tilemap layer2;
     public Tilemap layer3;
+    public Tilemap hazardLayer;
    
     public float spriteDelay;
     public float multiplier;
@@ -34,6 +35,7 @@ public class Chunk : MonoBehaviour
             StartCoroutine(ActiveTileLayer(layer1));
             StartCoroutine(ActiveTileLayer(layer2));
             StartCoroutine(ActiveTileLayer(layer3));
+            StartCoroutine(ActiveTileLayer(hazardLayer));
 
         }
        
@@ -41,45 +43,49 @@ public class Chunk : MonoBehaviour
     }
     IEnumerator ActiveTileLayer(Tilemap mapLayer)
     {
-        Tilemap tilemap = mapLayer;
-        foreach (var position in mapLayer.cellBounds.allPositionsWithin)
+        
+        if(mapLayer != null)
         {
-            if (mapLayer.HasTile(position))
+            foreach (var position in mapLayer.cellBounds.allPositionsWithin)
             {
-                Tile tile = (Tile)mapLayer.GetTile(position);
-                tile.colliderType = Tile.ColliderType.None;
-                tile.color = new Color(255, 255, 255, 0);
-                mapLayer.RefreshTile(position);
-               
-                
-
-            }
-        }
-        foreach (var position in mapLayer.cellBounds.allPositionsWithin)
-        {
-            if (mapLayer.HasTile(position))
-            {
-                Tile tile = (Tile)mapLayer.GetTile(position);
-                Vector3 tilePosition = position;
-              
-                tile.color = new Color(255, 255, 255, 255);
-                tile.colliderType = Tile.ColliderType.Sprite;
-                CreateSprite(tile.sprite, position, spriteDelay);
-                yield return new WaitForSeconds(spriteDelay);
-                if (tile.color != new Color(255, 255, 255, 255))
+                if (mapLayer.HasTile(position))
                 {
+                    Tile tile = (Tile)mapLayer.GetTile(position);
+                    tile.colliderType = Tile.ColliderType.None;
+                    tile.color = new Color(255, 255, 255, 0);
+                    mapLayer.RefreshTile(position);
+
+
+
+                }
+            }
+            foreach (var position in mapLayer.cellBounds.allPositionsWithin)
+            {
+                if (mapLayer.HasTile(position))
+                {
+                    Tile tile = (Tile)mapLayer.GetTile(position);
+                    Vector3 tilePosition = position;
+
                     tile.color = new Color(255, 255, 255, 255);
                     tile.colliderType = Tile.ColliderType.Sprite;
                     CreateSprite(tile.sprite, position, spriteDelay);
-                    
+                    yield return new WaitForSeconds(spriteDelay);
+                    if (tile.color != new Color(255, 255, 255, 255))
+                    {
+                        tile.color = new Color(255, 255, 255, 255);
+                        tile.colliderType = Tile.ColliderType.Sprite;
+                        CreateSprite(tile.sprite, position, spriteDelay);
+
+                    }
+                    if (tile.colliderType != Tile.ColliderType.Sprite) { tile.colliderType = Tile.ColliderType.Sprite; }
+                    mapLayer.RefreshTile(position);
+
+
+
                 }
-                if(tile.colliderType != Tile.ColliderType.Sprite) { tile.colliderType = Tile.ColliderType.Sprite; }
-                mapLayer.RefreshTile(position);
-               
-
-
             }
         }
+      
         
        
     }

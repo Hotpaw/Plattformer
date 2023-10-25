@@ -6,21 +6,25 @@ using UnityEngine.InputSystem;
 public class DimensionSwitch : MonoBehaviour
 {
     [SerializeField] private GameObject[] dimensions;
+    [SerializeField] private float timeBetweenSwitch;
 
+    private Animator animator;
     private int currentDimension = 0;
     private float time;
+
+    private void Start()
+    {
+        animator = GetComponent<Animator>();
+    }
 
     private void Update()
     {
         time += Time.deltaTime;
-        if (time > 3f)
+        if (time > timeBetweenSwitch)
         {
-            SwitchDimension();
+            animator.SetTrigger("DimensionSwitch");
             time = 0f;
         }
-
-        //if (Gamepad.current.leftShoulder.wasPressedThisFrame)
-        //    SwitchDimension();
     }
 
     public void SwitchDimension()
