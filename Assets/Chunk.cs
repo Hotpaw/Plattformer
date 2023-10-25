@@ -12,11 +12,11 @@ public class Chunk : MonoBehaviour
     public Ease ease;
     public Tilemap layer1;
     public Tilemap layer2;
-    public AnimatedTile animatedTile;
-    public Tile baseTile;
+    public Tilemap layer3;
+   
     public float spriteDelay;
     public float multiplier;
-   
+    public ParticleSystem snowSpawnEffect;
     public void OnEnable()
     {
         RevealTiles();
@@ -31,41 +31,50 @@ public class Chunk : MonoBehaviour
     {
         if (Application.isPlaying)
         {
-            StartCoroutine(ActiveTileLayer1());
-            StartCoroutine(ActiveTileLayer2());
+            StartCoroutine(ActiveTileLayer(layer1));
+            StartCoroutine(ActiveTileLayer(layer2));
+            StartCoroutine(ActiveTileLayer(layer3));
 
         }
        
 
     }
-    IEnumerator ActiveTileLayer1()
+    IEnumerator ActiveTileLayer(Tilemap mapLayer)
     {
-        foreach (var position in layer1.cellBounds.allPositionsWithin)
+        Tilemap tilemap = mapLayer;
+        foreach (var position in mapLayer.cellBounds.allPositionsWithin)
         {
-            if (layer1.HasTile(position))
+            if (mapLayer.HasTile(position))
             {
-                Tile tile = (Tile)layer1.GetTile(position);
+                Tile tile = (Tile)mapLayer.GetTile(position);
                 tile.colliderType = Tile.ColliderType.None;
                 tile.color = new Color(255, 255, 255, 0);
-                layer1.RefreshTile(position);
-
+                mapLayer.RefreshTile(position);
+               
                 
 
             }
         }
-        foreach (var position in layer1.cellBounds.allPositionsWithin)
+        foreach (var position in mapLayer.cellBounds.allPositionsWithin)
         {
-            if (layer1.HasTile(position))
+            if (mapLayer.HasTile(position))
             {
-                Tile tile = (Tile)layer1.GetTile(position);
+                Tile tile = (Tile)mapLayer.GetTile(position);
                 Vector3 tilePosition = position;
               
                 tile.color = new Color(255, 255, 255, 255);
                 tile.colliderType = Tile.ColliderType.Sprite;
                 CreateSprite(tile.sprite, position, spriteDelay);
                 yield return new WaitForSeconds(spriteDelay);
-              
-                layer1.RefreshTile(position);
+                if (tile.color != new Color(255, 255, 255, 255))
+                {
+                    tile.color = new Color(255, 255, 255, 255);
+                    tile.colliderType = Tile.ColliderType.Sprite;
+                    CreateSprite(tile.sprite, position, spriteDelay);
+                    
+                }
+                if(tile.colliderType != Tile.ColliderType.Sprite) { tile.colliderType = Tile.ColliderType.Sprite; }
+                mapLayer.RefreshTile(position);
                
 
 
@@ -74,44 +83,10 @@ public class Chunk : MonoBehaviour
         
        
     }
-    IEnumerator ActiveTileLayer2()
-    {
-        foreach (var position in layer2.cellBounds.allPositionsWithin)
-        {
-            if (layer2.HasTile(position))
-            {
-                Tile tile = (Tile)layer2.GetTile(position);
-                tile.colliderType = Tile.ColliderType.None;
-                tile.color = new Color(255, 255, 255, 0);
-                layer2.RefreshTile(position);
-
-
-
-            }
-        }
-        foreach (var position in layer2.cellBounds.allPositionsWithin)
-        {
-            if (layer2.HasTile(position))
-            {
-                Tile tile = (Tile)layer2.GetTile(position);
-                Vector3 tilePosition = position;
-                
-                tile.color = new Color(255, 255, 255, 255);
-                CreateSprite(tile.sprite, position, spriteDelay);
-                yield return new WaitForSeconds(spriteDelay);
-                tile.colliderType = Tile.ColliderType.Sprite;
-                layer2.RefreshTile(position);
-
-
-
-            }
-        }
-
-
-    }
+   
     public void CreateSprite(Sprite sprite, Vector3 localPosition, float time)
     {
-        
+        snowSpawnEffect.Stop();
         Vector3 offset = new Vector3((35 * multiplier) + 0.5f, 2, 0);
         var gameObject = new GameObject();
         var spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
@@ -121,7 +96,8 @@ public class Chunk : MonoBehaviour
         //gameObject.transform.DOPunchScale(Vector3.one, 0.5f);
         spriteRenderer.DOFade(0, 0f);
         spriteRenderer.DOFade(1, 0.3f);
-
+        snowSpawnEffect.transform.position = localPosition + offset;
+        snowSpawnEffect.Play();
         spriteRenderer.sprite = sprite;
         Destroy(gameObject, time);
     }
