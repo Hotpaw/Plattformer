@@ -11,7 +11,7 @@ public class spikes : MonoBehaviour
         {
             string currentScene = SceneManager.GetActiveScene().name;
             FindObjectOfType<SceneChanger>().TransitionToNewScene(currentScene);
-            
+            FindObjectOfType<Movement>().enabled = false;
             
             
         }

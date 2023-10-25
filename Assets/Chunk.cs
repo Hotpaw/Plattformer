@@ -43,7 +43,7 @@ public class Chunk : MonoBehaviour
     }
     IEnumerator ActiveTileLayer(Tilemap mapLayer)
     {
-        Tilemap tilemap = mapLayer;
+        
         if(mapLayer != null)
         {
             foreach (var position in mapLayer.cellBounds.allPositionsWithin)
