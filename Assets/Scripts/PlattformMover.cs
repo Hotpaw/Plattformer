@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlattformMover : MonoBehaviour
 {
@@ -13,7 +14,7 @@ public class PlattformMover : MonoBehaviour
 
     private Rigidbody2D rb;
 
-    Transform objectParent;
+
     void Start()
     {
         startPos = transform.position;
@@ -25,37 +26,48 @@ public class PlattformMover : MonoBehaviour
         {
 
             movePos.x = startPos.x + Mathf.Sin(Time.time * moveFreq) * moveDis;
-            //transform.position = new Vector2(movePos.x, transform.position.y);
-            rb.position = (new Vector2(movePos.x, transform.position.y));
+            transform.position = new Vector2(movePos.x, transform.position.y);
+
 
 
         }
         if (pathType == path.Vertical)
         {
             movePos.y = startPos.y + Mathf.Sin(Time.time * moveFreq) * moveDis;
-            //transform.position = new Vector2(transform.position.x, movePos.y);
-            rb.MovePosition(new Vector2(transform.position.x, movePos.y));
+            transform.position = new Vector2(transform.position.x, movePos.y);
+
         }
 
     }
-  
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
-       objectParent = collision.transform.parent;
+        bool leftstick = Gamepad.current.leftStick.IsActuated();
+        Debug.Log(leftstick);
 
-        Debug.Log(collision.gameObject.name);
-        if (collision.gameObject.CompareTag("Player"))
+
+        if (leftstick)
         {
-            Debug.Log(collision.gameObject.name);
-            collision.gameObject.transform.SetParent(transform, true);
+            collision.gameObject.transform.SetParent(null);
         }
+        if (!leftstick)
+        {
+
+
+            collision.gameObject.transform.SetParent(transform, true);
+
+
+        }
+
+    }
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        OnCollisionEnter2D (collision);
     }
     private void OnCollisionExit2D(Collision2D collision)
     {
-       
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            collision.gameObject.transform.SetParent(objectParent, true);
-        }
+        collision.gameObject.transform.SetParent(null);
     }
+
+
 }
