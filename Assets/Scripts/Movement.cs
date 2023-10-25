@@ -80,6 +80,12 @@ public class Movement : MonoBehaviour
 
                 animator.SetTrigger("Jump");
             }
+            RaycastHit2D ray = Physics2D.Raycast(transform.position, -transform.up, groundCheckLength + 0.1f, groundLayer);
+
+            if (ray && ray.collider.gameObject.CompareTag("Ice"))
+                deacceleration = 0;
+            else
+                deacceleration = 15;
         }
 
         rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -lowerVerticalVelocityClamp, upperVerticalVelocityClamp));
