@@ -11,6 +11,7 @@ public class PlattformMover : MonoBehaviour
     public float moveFreq;
     public float moveDis;
 
+    Transform objectParent;
     void Start()
     {
         startPos = transform.position;
@@ -33,5 +34,25 @@ public class PlattformMover : MonoBehaviour
             transform.position = new Vector2(transform.position.x, movePos.y);
         }
 
+    }
+  
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+       objectParent = collision.transform.parent;
+
+        Debug.Log(collision.gameObject.name);
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            Debug.Log(collision.gameObject.name);
+            collision.gameObject.transform.SetParent(transform, true);
+        }
+    }
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+       
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            collision.gameObject.transform.SetParent(objectParent, true);
+        }
     }
 }
