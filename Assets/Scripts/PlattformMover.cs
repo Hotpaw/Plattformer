@@ -44,10 +44,10 @@ public class PlattformMover : MonoBehaviour
     {
         Gamepad currentGamepad = Gamepad.current;
         bool leftstick = currentGamepad.leftStick.IsActuated() 
-            && currentGamepad.dpad.IsActuated() 
-            && Keyboard.current.aKey.IsActuated() 
-            && Keyboard.current.dKey.IsActuated();
-        Debug.Log(leftstick);
+            || currentGamepad.dpad.IsActuated() 
+            || Keyboard.current.aKey.IsActuated() 
+            || Keyboard.current.dKey.IsActuated();
+        
 
 
         if (leftstick)
@@ -62,7 +62,7 @@ public class PlattformMover : MonoBehaviour
 
 
         }
-
+        Debug.Log(leftstick);
     }
     private void OnCollisionStay2D(Collision2D collision)
     {

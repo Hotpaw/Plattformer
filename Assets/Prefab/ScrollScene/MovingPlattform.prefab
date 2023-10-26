@@ -434,9 +434,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a02936ab1f592e49ad61a8b5986fb5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pathType: 0
+  pathType: 1
   moveFreq: 0.7
-  moveDis: 10
+  moveDis: 5
 --- !u!61 &5927892820111117056
 BoxCollider2D:
   m_ObjectHideFlags: 0
