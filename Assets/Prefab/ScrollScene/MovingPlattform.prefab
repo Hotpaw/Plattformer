@@ -431,12 +431,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 3160752000263220044}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1e267e43c5b45b4096f113413745044, type: 3}
+  m_Script: {fileID: 11500000, guid: 2a02936ab1f592e49ad61a8b5986fb5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pathType: 1
-  moveFreq: 2
-  moveDis: 2
+  pathType: 0
+  moveFreq: 0.7
+  moveDis: 10
 --- !u!61 &5927892820111117056
 BoxCollider2D:
   m_ObjectHideFlags: 0

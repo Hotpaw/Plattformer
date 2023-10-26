@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: spike_tile_snow
+  m_Name: spike_tile_snow_R_up
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 21300000, guid: c57122cf6293532488b9df6d5f5a5df9, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 28fcde3800669a04b92d1ce15cddef5d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
