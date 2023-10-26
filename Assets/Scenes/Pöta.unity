@@ -442,38 +442,6 @@ MonoBehaviour:
   m_CameraActivatedEvent:
     m_PersistentCalls:
       m_Calls: []
---- !u!1 &869693925 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3160752000263220044, guid: 6175e46768f020347aa456309cd2e0f4, type: 3}
-  m_PrefabInstance: {fileID: 5938453807698404424}
-  m_PrefabAsset: {fileID: 0}
---- !u!50 &869693929
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 869693925}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 0
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 7
 --- !u!1 &1049098769
 GameObject:
   m_ObjectHideFlags: 0
@@ -5861,8 +5829,8 @@ Tilemap:
   - first: {x: 15, y: -21, z: 0}
     second:
       serializedVersion: 2
-      m_TileIndex: 7
-      m_TileSpriteIndex: 5
+      m_TileIndex: 0
+      m_TileSpriteIndex: 0
       m_TileMatrixIndex: 0
       m_TileColorIndex: 2
       m_TileObjectToInstantiateIndex: 65535
@@ -7210,8 +7178,8 @@ Tilemap:
       m_AllTileFlags: 1073741825
   m_AnimatedTiles: {}
   m_TileAssetArray:
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
+  - m_RefCount: 1
+    m_Data: {fileID: 11400000, guid: 4ddfd859951662e4e9a550c5113f96f2, type: 2}
   - m_RefCount: 57
     m_Data: {fileID: 11400000, guid: c612f14fb6f2f6549a3db48b1f194ed9, type: 2}
   - m_RefCount: 2
@@ -7224,11 +7192,11 @@ Tilemap:
     m_Data: {fileID: 11400000, guid: 95d898893e6dd25478a282e0c3017f01, type: 2}
   - m_RefCount: 20
     m_Data: {fileID: 11400000, guid: 26a4163734a8f9d4284aa5f7f4f8a9dd, type: 2}
-  - m_RefCount: 25
+  - m_RefCount: 24
     m_Data: {fileID: 11400000, guid: 89889255a76b93c4792229cd7e4b03a0, type: 2}
   m_TileSpriteArray:
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
+  - m_RefCount: 1
+    m_Data: {fileID: 21300000, guid: 0503f271e8ea2fd49a0226ddf470c70d, type: 3}
   - m_RefCount: 57
     m_Data: {fileID: 21300000, guid: 6e248e6f13ca1f741949276366fb67ea, type: 3}
   - m_RefCount: 2
@@ -7237,7 +7205,7 @@ Tilemap:
     m_Data: {fileID: 21300000, guid: 4202866563a3f1f49a7ed7dd3bcd2430, type: 3}
   - m_RefCount: 29
     m_Data: {fileID: 21300000, guid: 2d6f953bb104aec478d7efec5538fe1d, type: 3}
-  - m_RefCount: 25
+  - m_RefCount: 24
     m_Data: {fileID: 21300000, guid: 47d679b736d19ba4ca383a5de028f0fa, type: 3}
   - m_RefCount: 1
     m_Data: {fileID: 21300000, guid: 58354e237394ec74c8bc8497afbfe94d, type: 3}
@@ -8540,10 +8508,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Plattform
       objectReference: {fileID: 0}
-    - target: {fileID: 3160752000263220044, guid: 6175e46768f020347aa456309cd2e0f4, type: 3}
-      propertyPath: m_TagString
-      value: Ground
-      objectReference: {fileID: 0}
     - target: {fileID: 4125161207206635656, guid: 6175e46768f020347aa456309cd2e0f4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 22.25125
@@ -8585,25 +8549,25 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5927892820111117056, guid: 6175e46768f020347aa456309cd2e0f4, type: 3}
+      propertyPath: m_Size.x
+      value: 2.8041039
+      objectReference: {fileID: 0}
+    - target: {fileID: 5927892820111117056, guid: 6175e46768f020347aa456309cd2e0f4, type: 3}
       propertyPath: m_Size.y
-      value: 1.8575287
+      value: 0.030511856
       objectReference: {fileID: 0}
     - target: {fileID: 5927892820111117056, guid: 6175e46768f020347aa456309cd2e0f4, type: 3}
       propertyPath: m_Offset.x
-      value: -0.24
+      value: -0.24884796
       objectReference: {fileID: 0}
     - target: {fileID: 5927892820111117056, guid: 6175e46768f020347aa456309cd2e0f4, type: 3}
       propertyPath: m_Offset.y
-      value: 0.28305817
+      value: 1.1965666
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 2730247068205927532, guid: 6175e46768f020347aa456309cd2e0f4, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3160752000263220044, guid: 6175e46768f020347aa456309cd2e0f4, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 869693929}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6175e46768f020347aa456309cd2e0f4, type: 3}
 --- !u!4 &6898416766549296339
 Transform:
