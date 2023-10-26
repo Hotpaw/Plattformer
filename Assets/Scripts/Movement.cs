@@ -1,6 +1,7 @@
 
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using static UnityEditor.Timeline.TimelinePlaybackControls;
 
 
@@ -27,6 +28,9 @@ public class Movement : MonoBehaviour
     public float dashStrength;
     public float dashCooldown;
     private float dashTimer;
+
+    [Header("Dead")]
+    public bool dead;
 
     private float xInput;
     private float velocityX;
@@ -57,7 +61,7 @@ public class Movement : MonoBehaviour
         timeSinceGrounded += Time.deltaTime;
         timeSinceJumpPressed += Time.deltaTime;
 
-        if (!isDashing)
+        if (!isDashing && !dead)
         {
             MovementHorizontal();
             GroundCheck();
@@ -91,6 +95,15 @@ public class Movement : MonoBehaviour
         rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -lowerVerticalVelocityClamp, upperVerticalVelocityClamp));
         animator.SetFloat("Speed", Mathf.Abs(rb.velocity.x));
         animator.SetFloat("VerticalSpeed", rb.velocity.y);
+        animator.SetBool("Dead", dead);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Spike"))
+        {
+            Die();
+        }
     }
 
     public void Flip()
@@ -103,7 +116,7 @@ public class Movement : MonoBehaviour
 
     public void Dash(InputAction.CallbackContext context)
     {
-        if (context.action.IsPressed() && dashTimer > dashCooldown)
+        if (context.action.IsPressed() && dashTimer > dashCooldown && !dead)
         {
             int i;
 
@@ -163,5 +176,14 @@ public class Movement : MonoBehaviour
         }
 
         rb.velocity = new Vector2(velocityX, rb.velocity.y);
+    }
+
+    public void Die()
+    {
+        rb.velocity = new Vector2(0, 5);
+        animator.SetTrigger("Die");
+        GetComponent<Collider2D>().enabled = false;
+        dead = true;
+        SceneChanger.instance.TransitionToNewScene(SceneManager.GetActiveScene().name);
     }
 }
