@@ -6,6 +6,7 @@ public class TileManager : MonoBehaviour
 {
     public GameObject[] TileMap;
     public float multiplier = 0f;
+    int currentPlattform;
     // Start is called before the first frame update
     void Start()
     {
@@ -18,7 +19,11 @@ public class TileManager : MonoBehaviour
     // Update is called once per frame
     public void SpawnChunk(Transform currentChunkTransform)
     {
-        GameObject Chunk = Instantiate(TileMap[0], currentChunkTransform.position + new Vector3(+35,0,0), Quaternion.identity);
+        GameObject Chunk = Instantiate(TileMap[currentPlattform], currentChunkTransform.position + new Vector3(+35,0,0), Quaternion.identity);
+     
+
+        currentPlattform++;
+        
        
     }
     public void UpdateMultiplier()
