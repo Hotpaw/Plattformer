@@ -42,7 +42,11 @@ public class PlattformMover : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        bool leftstick = Gamepad.current.leftStick.IsActuated();
+        Gamepad currentGamepad = Gamepad.current;
+        bool leftstick = currentGamepad.leftStick.IsActuated() 
+            && currentGamepad.dpad.IsActuated() 
+            && Keyboard.current.aKey.IsActuated() 
+            && Keyboard.current.dKey.IsActuated();
         Debug.Log(leftstick);
 
 

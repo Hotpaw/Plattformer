@@ -64,7 +64,7 @@ public class Chunk : MonoBehaviour
                 if (mapLayer.HasTile(position))
                 {
                     Tile tile = (Tile)mapLayer.GetTile(position);
-                    Vector3 tilePosition = position;
+                    
 
                     tile.color = new Color(255, 255, 255, 255);
                     tile.colliderType = Tile.ColliderType.Sprite;
